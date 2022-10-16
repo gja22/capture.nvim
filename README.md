@@ -1,2 +1,7 @@
 # capture.nvim
-Capture notes in bneovim
+
+Capture various types of notes in neovim.
+
+Inspired by the Zettelkasten method.
+
+
