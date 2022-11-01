@@ -10,9 +10,14 @@ local function get_id()
     return os.date("%Y%m%d%H%M")
 end
 
--- Generate date in the format I like, YYYY-MM-DD
+-- Get date in short format, YYYY-MM-DD
 local function get_date()
     return os.date("%Y-%m-%d")
+end
+
+-- Get short day, Tue
+local function get_day()
+    return os.date("%a")
 end
 
 -- Ask for name of 1-1, meeting, or note
@@ -101,4 +106,85 @@ M.note = function()
         ' ', })
 end
 
+-- Create daily journal Zettel
+M.daily = function()
+    local id = get_id()
+    local date = get_date()
+    local day = get_day()
+    local name = 'Journal Entry ' .. day .. ' ' .. date
+    local title = name
+    local file = id .. '-daily-journal.md'
+
+    vim.api.nvim_command('e ' .. file)
+
+    vim.api.nvim_buf_set_lines(0, 0, 0, true, {
+        '---',
+        'id: ' .. id,
+        'title: ' .. title,
+        'date: ' .. date,
+        'tags: #journal #daily',
+        '---',
+        '# ' .. name,
+        ' ',
+        '## What commitment do I stand in today?',
+        ' ',
+        '- ',
+        ' ',
+        '## Intention for the day (in support of goals)',
+        ' ',
+        '- ',
+        ' ',
+        '## Notes',
+        ' ',
+        '- ',
+        ' ',
+        '## Comments/Concerns/Issues (review backwards)',
+        ' ',
+        '- ',
+        ' ',
+
+
+    })
+end
+
+-- Create weekly report Zettel
+M.weekly = function()
+    local id = get_id()
+    local date = get_date()
+    local day = get_day()
+    local name = 'Weekly Report ' .. day .. ' ' .. date
+    local title = name
+    local file = id .. '-weekly-report'
+
+    vim.api.nvim_command('e ' .. file)
+
+    vim.api.nvim_buf_set_lines(0, 0, 0, true, {
+        '---',
+        'id: ' .. id,
+        'title: ' .. title,
+        'date: ' .. date,
+        'tags: #journal #weekly',
+        '---',
+        '# ' .. name,
+        ' ',
+        '## Accomplishments',
+        ' ',
+        '- ',
+        ' ',
+        '## Plan for next week',
+        ' ',
+        '- ',
+        ' ',
+        '## Plan for next 3 months',
+        ' ',
+        '- ',
+        ' ',
+        '## Comments/Concerns/Issues',
+        ' ',
+        '- ',
+        ' ',
+
+
+    })
+end
 return M
