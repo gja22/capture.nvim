@@ -187,7 +187,7 @@ M.weekly = function()
     local day = "Fri"
     local name = 'Weekly Report ' .. day .. ' ' .. date
     local title = name
-    local file = id .. '-weekly-report'
+    local file = id .. '-weekly-report.md'
 
     vim.api.nvim_command('e ' .. file)
 
