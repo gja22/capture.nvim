@@ -10,9 +10,42 @@ local function get_id()
     return os.date("%Y%m%d%H%M")
 end
 
+-- Generate the id for the next Friday (including today)
+local function get_id_next_friday()
+    -- %w is day of week [0-6 = Sunday - Saturday]
+    local day_of_week = os.date("%w")
+    -- How many days away is Friday
+    local offset = 0
+    if day_of_week == 6 then
+        offset = 6
+    else
+        offset = 5 - day_of_week
+    end
+    local seconds_in_day = 24*60*60
+    return os.date("%Y%m%d%H%M", os.time()+(offset*seconds_in_day))
+end
+
 -- Get date in short format, YYYY-MM-DD
 local function get_date()
     return os.date("%Y-%m-%d")
+end
+
+-- Get the date of the next Friday (including today)
+-- in short format, YYYY-MM-DD
+local function get_date_next_friday()
+    -- %w is day of week [0-6 = Sunday - Saturday]
+    local day_of_week = os.date("%w")
+    -- print ("weekday: " .. day_of_week)
+    -- How many days away is Friday
+    local offset = 0
+    if day_of_week == "6" then
+        offset = 6
+    else
+        offset = 5 - day_of_week
+    end
+    -- print ("offset: " .. offset)
+    local seconds_in_day = 24*60*60
+    return os.date("%Y-%m-%d", os.time()+(offset*seconds_in_day))
 end
 
 -- Get short day, Tue
@@ -149,9 +182,9 @@ end
 
 -- Create weekly report Zettel
 M.weekly = function()
-    local id = get_id()
-    local date = get_date()
-    local day = get_day()
+    local id = get_id_next_friday()
+    local date = get_date_next_friday()
+    local day = "Fri"
     local name = 'Weekly Report ' .. day .. ' ' .. date
     local title = name
     local file = id .. '-weekly-report'
@@ -170,7 +203,7 @@ M.weekly = function()
         '## Accomplishments',
         ' ',
         '- ',
-        ' ',
+      ' ',
         '## Plan for next week',
         ' ',
         '- ',
