@@ -16,7 +16,7 @@ local function get_id_next_friday()
     local day_of_week = os.date("%w")
     -- How many days away is Friday
     local offset = 0
-    if day_of_week == 6 then
+    if day_of_week == "6" then
         offset = 6
     else
         offset = 5 - day_of_week
