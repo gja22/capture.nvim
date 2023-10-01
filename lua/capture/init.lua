@@ -206,6 +206,7 @@ M.daily = function()
         ' ',
         '## Notes',
         ' ',
+        '- Got set for the day',
         '- ',
         ' ',
         '## Comments/Concerns/Issues (review backwards)',
