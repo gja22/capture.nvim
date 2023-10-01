@@ -13,7 +13,7 @@ local function get_id(offset)
     if offset == 0 then
         return os.date("%Y%m%d%H%M")
     else
-        return os.date("%Y%m%d%H%M", os.time() * (offset * seconds_in_day))
+        return os.date("%Y%m%d%H%M", os.time() + (offset * seconds_in_day))
     end
 end
 
