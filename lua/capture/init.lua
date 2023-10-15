@@ -18,7 +18,7 @@ local function get_id(offset)
 end
 
 -- Generate the id for the next Friday (including today)
-local function get_id_next_friday()
+local function get_id_next_friday(weeks_ahead)
     -- %w is day of week [0-6 = Sunday - Saturday]
     local day_of_week = os.date("%w")
     -- How many days away is Friday
@@ -29,7 +29,7 @@ local function get_id_next_friday()
         offset = 5 - day_of_week
     end
     local seconds_in_day = 24 * 60 * 60
-    return os.date("%Y%m%d%H%M", os.time() + (offset * seconds_in_day))
+    return os.date("%Y%m%d%H%M", os.time() + (offset * seconds_in_day) + (weeks_ahead * 7 * seconds_in_day))
 end
 
 -- Get date in short format, YYYY-MM-DD
@@ -40,7 +40,7 @@ end
 
 -- Get the date of the next Friday (including today)
 -- in short format, YYYY-MM-DD
-local function get_date_next_friday()
+local function get_date_next_friday(weeks_ahead)
     -- %w is day of week [0-6 = Sunday - Saturday]
     local day_of_week = os.date("%w")
     -- print ("weekday: " .. day_of_week)
@@ -53,7 +53,7 @@ local function get_date_next_friday()
     end
     -- print ("offset: " .. offset)
     local seconds_in_day = 24 * 60 * 60
-    return os.date("%Y-%m-%d", os.time() + (offset * seconds_in_day))
+    return os.date("%Y-%m-%d", os.time() + (offset * seconds_in_day) + (weeks_ahead * 7 * seconds_in_day))
 end
 
 -- Get short day, Tue
@@ -98,6 +98,20 @@ local function get_days_ahead()
     return 0
 end
 
+-- Ask for how many weeks ahead to create entry format
+local function get_weeks_ahead()
+    local offset
+    local valid = { 0, 1 }
+    offset = vim.fn.input("Weeks ahead (press enter this week): ")
+    offset = tonumber(offset)
+    for _, v in ipairs(valid) do
+        if offset == v then
+            return offset
+        end
+    end
+    return 0
+end
+
 -- Create 1-1 Zettel
 M.oneonone = function()
     local id = get_id(0)
@@ -118,6 +132,8 @@ M.oneonone = function()
         '# ' .. name .. ' 1-1',
         '**date:** ' .. date,
         ' ', })
+
+    vim.api.nvim_command('write')
 end
 
 -- Create meeting Zettel
@@ -145,6 +161,8 @@ M.meeting = function()
         '---',
         '# ' .. name,
         ' ', })
+
+    vim.api.nvim_command('write')
 end
 
 -- Create note Zettel
@@ -172,6 +190,8 @@ M.note = function()
         '---',
         '# ' .. name,
         ' ', })
+
+    vim.api.nvim_command('write')
 end
 
 -- Create daily journal Zettel
@@ -213,16 +233,36 @@ M.daily = function()
         ' ',
         '- ',
     })
+
+    vim.api.nvim_command('write')
 end
+
+-- Check is weekly report already exists
+-- local function weekly_report_exists(id)
+--     local start = string.sub(id, 1, 8)
+--     vim.api.nvim_command('echomsg ' .. '"' .. start .. '"')
+--
+--     local cwDir = vim.fn.getcwd()
+--     -- vim.api.nvim_command('echomsg ' .. '"' .. cwDir .. '"')
+--     -- Get all files and directories in CWD
+--     local cwdContent = vim.split(vim.fn.glob(cwDir .. "/*" .. start .. "*weekly*"), '\n', { trimempty = true })
+--     for _, cwdItem in pairs(cwdContent) do
+--         vim.api.nvim_command('echomsg ' .. '"' .. cwdItem .. '"')
+--     end
+-- end
 
 -- Create weekly report Zettel
 M.weekly = function()
-    local id = get_id_next_friday()
-    local date = get_date_next_friday()
+    local offset = get_weeks_ahead()
+    vim.api.nvim_command('echomsg "Offset is' .. offset .. ' "')
+    local id = get_id_next_friday(offset)
+    local date = get_date_next_friday(offset)
     local day = "Fri"
     local name = 'Weekly Report ' .. day .. ' ' .. date
     local title = name
     local file = id .. '-weekly-report.md'
+
+    -- weekly_report_exists(id)
 
     vim.api.nvim_command('e ' .. file)
 
@@ -254,5 +294,7 @@ M.weekly = function()
         ' ',
         '- ',
     })
+
+    vim.api.nvim_command('write')
 end
 return M
